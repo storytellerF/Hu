@@ -41,6 +41,7 @@
                 android:hint="@string/send_message_to_friends"
                 android:importantForAutofill="no"
                 android:inputType="text"
+                android:minHeight="48dp"
                 app:layout_constraintBottom_toTopOf="@id/bottom"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
@@ -53,7 +54,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent">
 
-                <ImageView
+                <ImageButton
                     android:id="@+id/more"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -73,7 +74,8 @@
         app:layout_constraintStart_toStartOf="parent"
         tools:layout_height="200dp">
 
-        <ImageView
+        <ImageButton
+            android:id="@+id/select_image"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:contentDescription="@string/select_image"

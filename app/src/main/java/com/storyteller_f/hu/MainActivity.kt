@@ -1,6 +1,9 @@
 package com.storyteller_f.hu
 
 import android.os.Bundle
+import android.widget.Toast
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
 import com.storyteller_f.hu.databinding.ActivityMainBinding
@@ -19,6 +22,9 @@ class MainActivity : AppCompatActivity() {
             binding.inputBox
         )
     }
+    private val selectImage = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) {
+        Toast.makeText(this, it.toString(), Toast.LENGTH_SHORT).show()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,9 +32,11 @@ class MainActivity : AppCompatActivity() {
         setContentView(inflate.root)
         binding = inflate
         WindowCompat.setDecorFitsSystemWindows(window, false)
-
         huState
         setupPanelSwitch()
+        binding.selectImage.setOnClickListener {
+            selectImage.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+        }
     }
 
 
