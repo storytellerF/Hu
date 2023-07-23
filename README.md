@@ -1,5 +1,7 @@
 # Hu
 
+[![](https://jitpack.io/v/storytellerF/Hu.svg)](https://jitpack.io/#storytellerF/Hu)
+
 ## 使用
 
 ```kotlin
