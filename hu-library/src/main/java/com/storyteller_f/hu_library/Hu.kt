@@ -18,7 +18,7 @@ sealed class HuPanel(val navigatorHeight: Int?) {
     /**
      * 为空代表还没有从insetListener 中获取高度，但是当前应该是输入法状态
      */
-    class Ime(val height: Int?, navigatorHeight: Int?) : HuPanel(navigatorHeight)
+    class Ime(val height: Int, navigatorHeight: Int?) : HuPanel(navigatorHeight)
 
     /**
      * panel 的高度永远不是空

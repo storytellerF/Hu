@@ -32,10 +32,13 @@ class MainActivity : AppCompatActivity() {
         setContentView(inflate.root)
         binding = inflate
         WindowCompat.setDecorFitsSystemWindows(window, false)
-        huState
+        huState//init
         setupPanelSwitch()
         binding.selectImage.setOnClickListener {
             selectImage.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+        }
+        binding.content.setOnClickListener {
+            huState.switchPanel(-1)
         }
     }
 

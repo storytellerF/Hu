@@ -40,7 +40,7 @@ class HuState(
     private val density = context.resources.displayMetrics.density
 
     // 将 dp 值转换为 px 像素值
-    private val minimumImHeight = (minimumImHeightDp * density).toInt()
+    private val minimumImHeight = (MINIMUM_HEIGHT_DP * density).toInt()
 
     init {
         setup()
@@ -87,15 +87,9 @@ class HuState(
         panelState.observe(lifecycleOwner) {
             val navHeight = it.navigatorHeight ?: return@observe
 
-            val aniOffset = when {
-                /**
-                 * 仅承认inset 提供的高度。不会使用panel 提供的，也不会使用保存的
-                 */
-                it is HuPanel.Ime && it.height != null -> it.height
-                /**
-                 * 优先使用输入法提供的高度，否则使用保存下来的高度，否则使用200dp。具体代码在switchPanel
-                 */
-                it is HuPanel.Panel -> it.height
+            val aniOffset = when (it) {
+                is HuPanel.Ime -> it.height
+                is HuPanel.Panel -> it.height
                 else -> navHeight
             }
             panelContainer.updateLayoutParams {
@@ -114,27 +108,51 @@ class HuState(
     }
 
     /**
-     * 如果当前是panel 会判断索引是否相同，如果相同，相当与切换到输入法
+     *
+     * @param index 如果当前是panel 会判断索引是否相同，如果相同，相当与切换到输入法。如果是-1，代表关闭panel
      */
     fun switchPanel(index: Int) {
-        lifecycleOwner.lifecycleScope.launch {
-            val first = context.dataStore.data.first()[savedImeHeight]
-            switchPanel(index, first)
+        if (index == -1) {
+            closePanel()
+        } else {
+            lifecycleOwner.lifecycleScope.launch {
+                val height = context.dataStore.data.first()[savedImeHeight]
+                switchToPanel(index, height)
+            }
+        }
+    }
+
+    private fun closePanel() {
+        val state = currentPanelState
+        val navigatorHeight = currentPanelState.navigatorHeight ?: return
+        panelState.value = HuPanel.None(navigatorHeight)
+        when (state) {
+            is HuPanel.Ime -> {
+                context.hideKeyboard()
+            }
+            is HuPanel.Panel -> {
+                state.height
+                doPanelAnimation(-state.height + navigatorHeight)
+            }
+            else -> {
+
+            }
         }
     }
 
     /**
      * 如果当前是panel 会判断索引是否相同，如果相同，相当与切换到输入法
      */
-    private fun switchPanel(index: Int, height: Int?) {
+    private fun switchToPanel(index: Int, height: Int?) {
         Log.d(TAG, "switchPanel() called with: index = $index, height = $height")
         val fallbackImeHeight = height?.takeIf { it > minimumImHeight } ?: minimumImHeight
-
-        when (val state = currentPanelState) {
+        val state = currentPanelState
+        val navigatorHeight = state.navigatorHeight ?: return
+        when (state) {
             is HuPanel.Ime -> {
                 //一般ime 这里取到的高度不是空
                 panelState.value = HuPanel.Panel(
-                    index, state.height ?: fallbackImeHeight, state.navigatorHeight
+                    index, state.height, navigatorHeight
                 )//复用当前输入法的高度
                 context.hideKeyboard()
             }
@@ -142,20 +160,20 @@ class HuState(
             is HuPanel.Panel -> {
                 if (index == state.index) {
                     panelState.value =
-                        HuPanel.Ime(state.height, null)//panel 的高度可能是不正确的，以后续的inset 获取
+                        HuPanel.Ime(state.height, navigatorHeight)//panel 的高度可能是不正确的，以后续的inset 获取
                     context.showKeyboard(inputBox)
                 } else {
                     //切换到另一个panel
-                    panelState.value = HuPanel.Panel(index, state.height, state.navigatorHeight)
+                    panelState.value = HuPanel.Panel(index, state.height, navigatorHeight)
                     context.hideKeyboard()
                 }
             }
 
             is HuPanel.None -> {
                 panelState.value =
-                    HuPanel.Panel(index, fallbackImeHeight, state.navigatorHeight)
+                    HuPanel.Panel(index, fallbackImeHeight, navigatorHeight)
                 //执行动画
-                doPanelAnimation(fallbackImeHeight)
+                doPanelAnimation(fallbackImeHeight - navigatorHeight)
             }
         }
     }
@@ -175,6 +193,6 @@ class HuState(
 
     companion object {
         private const val TAG = "HuState"
-        const val minimumImHeightDp = 200
+        const val MINIMUM_HEIGHT_DP = 200
     }
 }
