@@ -1,6 +1,8 @@
 package com.storyteller_f.hu
 
+import android.graphics.Color
 import android.os.Bundle
+import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -28,16 +30,19 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val inflate = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(inflate.root)
-        binding = inflate
+        val inflated = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(inflated.root)
+        binding = inflated
         WindowCompat.setDecorFitsSystemWindows(window, false)
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+        window.navigationBarColor = Color.TRANSPARENT
+
         huState//init
         setupPanelSwitch()
-        binding.selectImage.setOnClickListener {
+        inflated.selectImage.setOnClickListener {
             selectImage.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
         }
-        binding.content.setOnClickListener {
+        inflated.content.setOnClickListener {
             huState.switchPanel(-1)
         }
     }

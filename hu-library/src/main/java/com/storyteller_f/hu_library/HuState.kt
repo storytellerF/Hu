@@ -130,10 +130,12 @@ class HuState(
             is HuPanel.Ime -> {
                 context.hideKeyboard()
             }
+
             is HuPanel.Panel -> {
                 state.height
-                doPanelAnimation(-state.height + navigatorHeight)
+                doClosePanelAnimation(state.height, navigatorHeight)
             }
+
             else -> {
 
             }
@@ -173,10 +175,16 @@ class HuState(
                 panelState.value =
                     HuPanel.Panel(index, fallbackImeHeight, navigatorHeight)
                 //执行动画
-                doPanelAnimation(fallbackImeHeight - navigatorHeight)
+                doShowPanelAnimation(fallbackImeHeight, navigatorHeight)
             }
         }
     }
+
+    private fun doShowPanelAnimation(panelHeight: Int, navigatorHeight: Int) =
+        doPanelAnimation(panelHeight - navigatorHeight)
+
+    private fun doClosePanelAnimation(panelHeight: Int, navigatorHeight: Int) =
+        doPanelAnimation(-panelHeight + navigatorHeight)
 
     private fun doPanelAnimation(start: Int) {
         ValueAnimator.ofInt(start, 0).apply {
