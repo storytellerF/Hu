@@ -39,10 +39,15 @@
                 android:id="@+id/input_box"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginHorizontal="5dp"
+                android:textColorHint="#000"
+                android:background="#1A000000"
                 android:hint="@string/send_message_to_friends"
                 android:importantForAutofill="no"
                 android:inputType="text"
                 android:minHeight="48dp"
+                app:layout_constraintWidth_max="400dp"
+                android:paddingHorizontal="15dp"
                 app:layout_constraintBottom_toTopOf="@id/bottom"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
@@ -57,8 +62,9 @@
 
                 <ImageButton
                     android:id="@+id/more"
-                    android:layout_width="wrap_content"
+                    android:layout_width="48dp"
                     android:layout_height="wrap_content"
+                    android:adjustViewBounds="true"
                     android:contentDescription="@string/more"
                     android:padding="10dp"
                     android:src="@drawable/baseline_more_horiz_24" />
